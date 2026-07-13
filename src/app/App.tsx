@@ -1109,17 +1109,16 @@ function Section5TwoModels({
               <thead>
                 <tr className="border-b border-border">
                   <th className="px-6 py-3 text-left font-mono text-[11px] tracking-wider uppercase text-muted-foreground">Tiêu chí</th>
-                  <th className="px-6 py-3 text-left font-mono text-[11px] tracking-wider uppercase text-muted-foreground">Tư bản thuần túy</th>
+                  <th className="px-6 py-3 text-left font-mono text-[11px] tracking-wider uppercase text-muted-foreground">KTTT tư bản chủ nghĩa</th>
                   <th className="px-6 py-3 text-left font-mono text-[11px] tracking-wider uppercase text-accent">KTTT định hướng XHCN</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {[
-                  ["Mục tiêu ưu tiên", "Tối đa hóa lợi nhuận", "Tăng trưởng + Công bằng xã hội"],
-                  ["Vai trò Nhà nước", "Tối thiểu hóa can thiệp", "Điều tiết chủ động bằng chính sách"],
-                  ["Phân phối nguồn lực", "Hoàn toàn theo tín hiệu giá", "Có định hướng xã hội"],
-                  ["Nhà ở người thu nhập thấp", "Phụ thuộc hoàn toàn thị trường", "Có chính sách hỗ trợ cụ thể"],
-                  ["Kết quả tổng thể", "Tăng trưởng nhanh, bất bình đẳng cao", "Tăng trưởng bền vững, công bằng hơn"],
+                  ["Mục tiêu", "Lợi nhuận, tăng trưởng", "Tăng trưởng gắn với công bằng xã hội"],
+                  ["Sở hữu", "Chủ yếu là sở hữu tư nhân", "Nhiều hình thức sở hữu, kinh tế nhà nước giữ vai trò chủ đạo"],
+                  ["Quản lý", "Thị trường quyết định, Nhà nước can thiệp hạn chế", "Thị trường vận hành, Nhà nước điều tiết bằng pháp luật và chính sách"],
+                  ["Phân phối", "Chủ yếu theo thị trường và vốn", "Theo lao động, hiệu quả kinh tế và an sinh xã hội"],
                 ].map(([crit, cap, soc]) => (
                   <tr key={crit}>
                     <td className="px-6 py-3 font-mono text-xs text-muted-foreground">{crit}</td>

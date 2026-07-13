@@ -50,3 +50,5 @@ Desktop.ini
 *.temp
 *.bak
 *~
+
+.vercel

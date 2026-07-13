@@ -7,7 +7,7 @@ import {
   ChevronDown, Building2, Home, TrendingUp, TrendingDown,
   CheckCircle, XCircle, ArrowDown, ArrowRight, AlertTriangle,
   Landmark, Users, DollarSign, Percent, Clock, Shield,
-  FileText, Upload, Clipboard, Play, RotateCcw, Gamepad2,
+  FileText, Upload, Clipboard, Play, Gamepad2,
   Fish, KeyRound, UserPlus, Trophy, Circle, Target,
   ArrowLeft, Music, Pause, Volume2,
 } from "lucide-react";
@@ -45,6 +45,7 @@ type StudyRoom = {
   code: string;
   hostName: string;
   questions: QuizQuestion[];
+  gameMode?: GameMode;
   phase: RoomPhase;
   players: RoomPlayer[];
   startedAt?: number;
@@ -1781,7 +1782,7 @@ function Section9StudyRoom({
   const rankedPlayers = useMemo(() => rankPlayers(room?.players ?? []), [room?.players]);
   const currentRank = currentPlayer ? rankedPlayers.findIndex(player => player.id === currentPlayer.id) + 1 : 0;
   const finished = currentPlayer?.status === "done" || activeIndex >= questions.length;
-  const activeGameMode = currentPlayer?.mode ?? mode;
+  const activeGameMode = currentPlayer?.mode ?? room?.gameMode ?? mode;
   const defaultMusic = activeGameMode ? GAME_AUDIO[activeGameMode] : null;
   const activeMusicSrc = musicUrl || defaultMusic?.src || "";
   const activeMusicLabel = musicName || defaultMusic?.label || "Chưa chọn nhạc";
@@ -1805,11 +1806,13 @@ function Section9StudyRoom({
 
   const createRoom = useCallback(() => {
     const nextQuestions = getUsableQuestions(draftQuestions);
+    const selectedGameMode = mode ?? "football";
 
     const nextRoom = {
       code: createRoomCode(),
       hostName: hostName.trim() || "Chủ phòng",
       questions: nextQuestions.length > 0 ? nextQuestions : SAMPLE_QUESTIONS,
+      gameMode: selectedGameMode,
       phase: "lobby" as const,
       players: [],
       updatedAt: Date.now(),
@@ -1817,13 +1820,13 @@ function Section9StudyRoom({
 
     setRole("host");
     setJoinCode(nextRoom.code);
-    setMode(null);
+    setMode(selectedGameMode);
     setActiveIndex(0);
     setSelectedAnswer("");
     setAnswerLog([]);
     publishRoom(nextRoom);
-    setMessage(`Đã tạo phòng ${nextRoom.code} với ${nextQuestions.length} câu hỏi.`);
-  }, [draftQuestions, hostName, publishRoom]);
+    setMessage(`Đã tạo phòng ${nextRoom.code} với ${nextQuestions.length} câu hỏi · game ${getGameLabel(selectedGameMode)}.`);
+  }, [draftQuestions, hostName, mode, publishRoom]);
 
   useEffect(() => {
     if (role !== "host" || !room || room.phase !== "lobby") return;
@@ -1913,17 +1916,19 @@ function Section9StudyRoom({
     setSelectedAnswer("");
     setAnswerLog([]);
     publishRoom(nextRoom);
-    setMessage(`${player.name} đã vào phòng ${nextRoom.code}. Chọn game rồi đợi host bắt đầu.`);
+    setMessage(`${player.name} đã vào phòng ${nextRoom.code}. Game do host chọn: ${getGameLabel(nextRoom.gameMode ?? "football")}.`);
   }, [joinCode, playerName, publishRoom]);
 
-  const chooseMode = useCallback(async (nextMode: GameMode) => {
+  const setRoomGameMode = useCallback(async (nextMode: GameMode) => {
     setMode(nextMode);
     if (!room) return;
+    if (room.phase !== "lobby") {
+      setMessage("Chỉ đổi game khi phòng còn ở lobby.");
+      return;
+    }
     const latestRoom = await readRealtimeRoom(room.code) ?? room;
-    publishRoom({
-      ...latestRoom,
-      players: latestRoom.players.map(player => player.id === playerIdRef.current ? { ...player, mode: nextMode } : player),
-    });
+    publishRoom({ ...latestRoom, gameMode: nextMode });
+    setMessage(`Host đã chọn game ${getGameLabel(nextMode)} cho cả phòng.`);
   }, [publishRoom, room]);
 
   const startGame = useCallback(() => {
@@ -1932,13 +1937,16 @@ function Section9StudyRoom({
       setMessage("Cần ít nhất một người chơi trong lobby.");
       return;
     }
+    const selectedGameMode = room.gameMode ?? mode ?? "football";
 
     publishRoom({
       ...room,
+      gameMode: selectedGameMode,
       phase: "playing",
       startedAt: Date.now(),
       players: room.players.map(player => ({
         ...player,
+        mode: selectedGameMode,
         status: "playing" as const,
         score: 0,
         correct: 0,
@@ -1947,8 +1955,8 @@ function Section9StudyRoom({
         completedAt: undefined,
       })),
     });
-    setMessage("Game đã bắt đầu.");
-  }, [publishRoom, room]);
+    setMessage(`Game ${getGameLabel(selectedGameMode)} đã bắt đầu cho cả phòng.`);
+  }, [mode, publishRoom, room]);
 
   const resetRoom = useCallback(() => {
     if (!room) return;
@@ -1958,6 +1966,7 @@ function Section9StudyRoom({
       startedAt: undefined,
       players: room.players.map(player => ({
         ...player,
+        mode: null,
         status: "lobby" as const,
         score: 0,
         correct: 0,
@@ -1970,18 +1979,6 @@ function Section9StudyRoom({
     setSelectedAnswer("");
     setAnswerLog([]);
     setMessage("Đã đưa phòng về lobby để chơi lại.");
-  }, [publishRoom, room]);
-
-  const changeGame = useCallback(() => {
-    setMode(null);
-    setActiveIndex(0);
-    setSelectedAnswer("");
-    setAnswerLog([]);
-    if (!room) return;
-    publishRoom({
-      ...room,
-      players: room.players.map(player => player.id === playerIdRef.current ? { ...player, mode: null, status: room.phase === "playing" ? "playing" : "lobby" } : player),
-    });
   }, [publishRoom, room]);
 
   const handleFile = useCallback(async (file: File | undefined) => {
@@ -2400,6 +2397,34 @@ function Section9StudyRoom({
                   </p>
                 </div>
 
+                <div className="mb-4 border-2 border-[#fff3b0]/50 bg-[#17103f] p-3">
+                  <p className="mb-3 text-[10px] font-black uppercase tracking-[0.25em] text-[#fff3b0]/80">
+                    Game của phòng · Host chọn
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {([
+                      { key: "football" as const, label: "Football" },
+                      { key: "fishing" as const, label: "Fishing" },
+                    ]).map(game => {
+                      const selectedGame = (room?.gameMode ?? mode ?? "football") === game.key;
+                      return (
+                        <button
+                          key={game.key}
+                          onClick={() => setRoomGameMode(game.key)}
+                          disabled={!room || room.phase !== "lobby"}
+                          className={`${getPixelButtonClass(selectedGame)} inline-flex items-center justify-center gap-2 ${!room || room.phase !== "lobby" ? "opacity-50 cursor-not-allowed" : ""}`}
+                        >
+                          {game.key === "football" ? <Circle className="w-4 h-4" /> : <Fish className="w-4 h-4" />}
+                          {game.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-3 text-xs leading-relaxed text-white/65">
+                    Player trong phòng sẽ chơi chung: <span className="font-black text-[#ffbe0b]">{getGameLabel(room?.gameMode ?? mode ?? "football")}</span>
+                  </p>
+                </div>
+
                 <div className="mb-4">
                   <PlayerRoster
                     players={room?.players ?? []}
@@ -2509,40 +2534,21 @@ function Section9StudyRoom({
 	              <p className="text-[11px] uppercase tracking-[0.3em] text-[#06d6a0] mb-3">
                 {room.phase === "lobby" ? "Waiting Lobby" : "Game Started"} · {room.code}
               </p>
-	              <h2 className="text-2xl font-black text-white mb-2">Choose your mini-game</h2>
+	              <h2 className="text-2xl font-black text-white mb-2">Host selected: {getGameLabel(room.gameMode ?? "football")}</h2>
 	              <p className="text-sm text-white/65 mb-5">
 	                {room.phase === "lobby"
-                    ? `Host starts when ready. ${room.questions.length} questions · 30s each.`
-                    : `Pick one game to enter the current ${room.questions.length}-question match.`}
+                    ? `Đợi host bấm Start. Cả phòng sẽ chơi chung ${getGameLabel(room.gameMode ?? "football")}. ${room.questions.length} câu · 30s/câu.`
+                    : `Host đã bắt đầu. Đang đồng bộ game ${getGameLabel(room.gameMode ?? "football")} cho bạn.`}
 	              </p>
-              <div className="grid md:grid-cols-2 gap-4">
-            {[
-              {
-                key: "football" as const,
-                title: "Football",
-                desc: "Correct answers push the ball forward and score goals.",
-              },
-              {
-                key: "fishing" as const,
-                title: "Fishing",
-                desc: "Correct and fast answers catch bigger fish.",
-              },
-            ].map(game => (
-              <button
-                key={game.key}
-                onClick={() => chooseMode(game.key)}
-                className={`group border-2 p-5 text-left shadow-[4px_4px_0_rgba(0,0,0,0.35)] ${
-	                  currentPlayer.mode === game.key
-	                    ? "border-[#ffbe0b] bg-[#ffbe0b]/20"
-	                    : "border-white/15 bg-[#07111f] hover:border-[#06d6a0]/70"
-	                }`}
-              >
-                <PixelGameIcon mode={game.key} />
-                <p className="text-xl font-black text-white mb-2 mt-4">{game.title}</p>
-                <p className="text-sm text-white/65 leading-relaxed mb-5">{game.desc}</p>
-                <span className="text-xs font-black uppercase tracking-wider text-[#ef476f]">{currentPlayer.mode === game.key ? "Selected" : "Select"}</span>
-              </button>
-            ))}
+              <div className="border-2 border-[#ffbe0b]/80 bg-[#17103f] p-5 shadow-[4px_4px_0_rgba(0,0,0,0.35)]">
+                <PixelGameIcon mode={room.gameMode ?? "football"} />
+                <p className="text-xl font-black text-white mb-2 mt-4">{getGameLabel(room.gameMode ?? "football")}</p>
+                <p className="text-sm text-white/65 leading-relaxed mb-5">
+                  {room.gameMode === "fishing"
+                    ? "Trả lời đúng và nhanh để bắt cá lớn hơn. Host là người chọn game này cho cả phòng."
+                    : "Trả lời đúng để đưa bóng về khung thành và ghi bàn. Host là người chọn game này cho cả phòng."}
+                </p>
+                <span className="text-xs font-black uppercase tracking-wider text-[#ffbe0b]">Locked by host</span>
               </div>
             </div>
             <div className="space-y-4">
@@ -2568,9 +2574,9 @@ function Section9StudyRoom({
                       {currentPlayer.mode === "football" ? "Football Field" : "Fishing Lake"}
                     </p>
                   </div>
-	                  <button onClick={changeGame} className="w-11 h-11 border-2 border-[#fff3b0] bg-[#17103f] flex items-center justify-center" aria-label="Chọn lại trò chơi">
-                    <RotateCcw className="w-4 h-4 text-foreground/60" />
-                  </button>
+                  <span className="border-2 border-[#fff3b0]/70 bg-[#17103f] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#fff3b0]">
+                    Host game
+                  </span>
                 </div>
 
                 <PixelGameScene
@@ -2708,9 +2714,8 @@ function Section9StudyRoom({
                   <p className="text-2xl font-black text-white">#{currentRank || "-"}</p>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <button onClick={resetRoom} className={getPixelButtonClass(true)}>Play Again</button>
-                <button onClick={changeGame} className={getPixelButtonClass(false)}>Choose Game</button>
+              <div className="border-2 border-[#fff3b0]/50 bg-[#17103f] px-4 py-3 text-sm text-white/75">
+                Đợi host bấm Play Again hoặc đổi game cho cả phòng.
               </div>
             </div>
             <div className="space-y-6">

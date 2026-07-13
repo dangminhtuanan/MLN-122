@@ -25,6 +25,7 @@ type QuizQuestion = {
   id: string;
   prompt: string;
   answer: string;
+  choices?: string[];
 };
 
 type RoomPlayer = {
@@ -90,33 +91,75 @@ const IMPACTS: Record<PolicyKey, typeof BASE> = {
 
 const SAMPLE_QUESTIONS: QuizQuestion[] = [
   {
-    id: "sample-1",
-    prompt: "Trong nền kinh tế thị trường, doanh nghiệp thường ưu tiên mục tiêu nào?",
-    answer: "Tối đa hóa lợi nhuận",
+    id: "chapter-5-1",
+    prompt: "Kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam là nền kinh tế:",
+    answer: "Vận hành theo các quy luật của thị trường, đồng thời hướng tới xác lập xã hội dân giàu, nước mạnh, dân chủ, công bằng, văn minh, có sự điều tiết của Nhà nước do Đảng Cộng sản Việt Nam lãnh đạo",
+    choices: [
+      "Vận hành hoàn toàn theo mệnh lệnh hành chính của Nhà nước, không có thị trường",
+      "Vận hành theo các quy luật của thị trường, đồng thời hướng tới xác lập xã hội dân giàu, nước mạnh, dân chủ, công bằng, văn minh, có sự điều tiết của Nhà nước do Đảng Cộng sản Việt Nam lãnh đạo",
+      "Vận hành thuần túy theo quy luật thị trường, Nhà nước không can thiệp",
+      "Nền kinh tế tự cấp tự túc, khép kín",
+    ],
   },
   {
-    id: "sample-2",
-    prompt: "Khi thị trường không tự giải quyết được nhà ở cho người thu nhập thấp, Nhà nước cần làm gì?",
-    answer: "Điều tiết bằng chính sách",
+    id: "chapter-5-2",
+    prompt: "Mục tiêu của nền kinh tế thị trường định hướng XHCN ở Việt Nam hướng tới xã hội:",
+    answer: "Dân giàu, nước mạnh, dân chủ, công bằng, văn minh",
+    choices: ["Dân giàu, nước mạnh, dân chủ, công bằng, văn minh", "Tối đa hóa lợi nhuận cho doanh nghiệp tư nhân", "Xóa bỏ hoàn toàn sở hữu tư nhân", "Phân phối bình quân tuyệt đối cho mọi người"],
   },
   {
-    id: "sample-3",
-    prompt: "NOXH là viết tắt của khái niệm nào?",
-    answer: "Nhà ở xã hội",
+    id: "chapter-5-3",
+    prompt: "Trong nền kinh tế thị trường định hướng XHCN ở Việt Nam, thành phần kinh tế giữ vai trò chủ đạo là:",
+    answer: "Kinh tế nhà nước",
+    choices: ["Kinh tế có vốn đầu tư nước ngoài", "Kinh tế tư nhân", "Kinh tế nhà nước", "Kinh tế tập thể"],
   },
   {
-    id: "sample-4",
-    prompt: "Công cụ nào giúp kiểm soát NOXH đến đúng đối tượng?",
-    answer: "Thể chế minh bạch và số hóa",
+    id: "chapter-5-4",
+    prompt: "Theo đặc trưng của nền kinh tế thị trường định hướng XHCN, kinh tế tư nhân được xác định là:",
+    answer: "Một động lực quan trọng của nền kinh tế",
+    choices: ["Thành phần bị hạn chế, cần xóa bỏ", "Một động lực quan trọng của nền kinh tế", "Thành phần giữ vai trò chủ đạo", "Không được thừa nhận"],
   },
+  { id: "chapter-5-5", prompt: "Về quan hệ quản lý, nền kinh tế thị trường định hướng XHCN do:", answer: "Nhà nước pháp quyền XHCN của dân, do dân, vì dân quản lý dưới sự lãnh đạo của Đảng Cộng sản", choices: ["Doanh nghiệp tư nhân tự quản lý hoàn toàn", "Nhà nước pháp quyền XHCN của dân, do dân, vì dân quản lý dưới sự lãnh đạo của Đảng Cộng sản", "Các tập đoàn nước ngoài điều phối", "Thị trường tự điều tiết, không cần quản lý"] },
+  { id: "chapter-5-6", prompt: "Hình thức phân phối giữ vai trò chủ yếu trong nền kinh tế thị trường định hướng XHCN là:", answer: "Phân phối theo lao động và hiệu quả kinh tế", choices: ["Phân phối bình quân cho tất cả", "Phân phối theo lao động và hiệu quả kinh tế", "Phân phối chỉ theo vốn góp", "Phân phối theo nhu cầu tuyệt đối"] },
+  { id: "chapter-5-7", prompt: "Đặc trưng về quan hệ giữa tăng trưởng kinh tế và công bằng xã hội trong nền KTTT định hướng XHCN là:", answer: "Phát triển kinh tế đi đôi với tiến bộ và công bằng xã hội", choices: ["Ưu tiên tăng trưởng, bỏ qua công bằng xã hội", "Phát triển kinh tế đi đôi với tiến bộ và công bằng xã hội", "Chỉ chú trọng công bằng, không cần tăng trưởng", "Tách rời tăng trưởng khỏi các vấn đề xã hội"] },
+  { id: "chapter-5-8", prompt: "“Thể chế” được hiểu là:", answer: "Những quy tắc, pháp luật, bộ máy và cơ chế vận hành nhằm điều chỉnh hoạt động của con người trong một chế độ xã hội", choices: ["Chỉ là hệ thống pháp luật hình sự", "Những quy tắc, pháp luật, bộ máy và cơ chế vận hành nhằm điều chỉnh hoạt động của con người trong một chế độ xã hội", "Một loại thị trường hàng hóa cụ thể", "Kế hoạch sản xuất của doanh nghiệp"] },
+  { id: "chapter-5-9", prompt: "Một trong những lý do khách quan phải hoàn thiện thể chế kinh tế thị trường định hướng XHCN ở Việt Nam là:", answer: "Hệ thống thể chế còn chưa đồng bộ, chưa đầy đủ, kém hiệu lực, hiệu quả và thiếu các yếu tố thị trường", choices: ["Thể chế đã hoàn hảo, không cần thay đổi", "Hệ thống thể chế còn chưa đồng bộ, chưa đầy đủ, kém hiệu lực, hiệu quả và thiếu các yếu tố thị trường", "Vì muốn xóa bỏ kinh tế thị trường", "Vì cần loại bỏ vai trò của Nhà nước"] },
+  { id: "chapter-5-10", prompt: "Sự điều tiết của Nhà nước trong nền KTTT định hướng XHCN nhằm mục đích chủ yếu là:", answer: "Khắc phục khuyết tật của thị trường và bảo đảm định hướng XHCN, hài hòa các quan hệ lợi ích", choices: ["Thay thế hoàn toàn thị trường bằng kế hoạch hóa", "Khắc phục khuyết tật của thị trường và bảo đảm định hướng XHCN, hài hòa các quan hệ lợi ích", "Bảo vệ lợi nhuận tối đa cho một nhóm doanh nghiệp", "Hạn chế mọi hoạt động kinh doanh"] },
+  { id: "chapter-5-11", prompt: "Điểm khác biệt căn bản giữa kinh tế thị trường tư bản chủ nghĩa và kinh tế thị trường định hướng XHCN nằm ở:", answer: "Mục tiêu và định hướng phát triển: một bên vì lợi nhuận và lợi ích tư bản, một bên vì tiến bộ, công bằng xã hội, dân giàu nước mạnh dưới sự lãnh đạo của Đảng", choices: ["Việc sử dụng tiền tệ trong trao đổi", "Mục tiêu và định hướng phát triển: một bên vì lợi nhuận và lợi ích tư bản, một bên vì tiến bộ, công bằng xã hội, dân giàu nước mạnh dưới sự lãnh đạo của Đảng", "Sự tồn tại của quy luật cung - cầu", "Việc doanh nghiệp cạnh tranh với nhau"] },
+  { id: "chapter-5-12", prompt: "Phát triển kinh tế thị trường định hướng XHCN ở Việt Nam là:", answer: "Tất yếu khách quan, phù hợp quy luật phát triển và điều kiện thực tiễn của Việt Nam", choices: ["Một lựa chọn ngẫu nhiên, có thể thay bằng mô hình khác bất cứ lúc nào", "Tất yếu khách quan, phù hợp quy luật phát triển và điều kiện thực tiễn của Việt Nam", "Sự sao chép nguyên vẹn mô hình tư bản chủ nghĩa", "Việc quay lại nền kinh tế kế hoạch hóa tập trung"] },
+  { id: "chapter-5-13", prompt: "Chủ thể lãnh đạo nền kinh tế thị trường định hướng XHCN ở Việt Nam là:", answer: "Đảng Cộng sản Việt Nam", choices: ["Các tập đoàn kinh tế lớn", "Đảng Cộng sản Việt Nam", "Doanh nghiệp có vốn đầu tư nước ngoài", "Các tổ chức quốc tế"] },
+  { id: "chapter-5-14", prompt: "Vai trò “chủ đạo” của kinh tế nhà nước được hiểu đúng nhất là:", answer: "Nắm giữ những lĩnh vực, ngành then chốt và giữ vai trò dẫn dắt, định hướng nền kinh tế", choices: ["Chiếm tỷ trọng lớn nhất trong mọi ngành nghề", "Nắm giữ những lĩnh vực, ngành then chốt và giữ vai trò dẫn dắt, định hướng nền kinh tế", "Thay thế hoàn toàn kinh tế tư nhân", "Chỉ hoạt động trong lĩnh vực công ích"] },
+  { id: "chapter-5-15", prompt: "Các thành phần kinh tế trong nền KTTT định hướng XHCN có quan hệ:", answer: "Bình đẳng trước pháp luật, hợp tác và cạnh tranh, cùng phát triển lâu dài", choices: ["Đối lập, loại trừ nhau", "Bình đẳng trước pháp luật, hợp tác và cạnh tranh, cùng phát triển lâu dài", "Chỉ có kinh tế nhà nước được tồn tại", "Hoàn toàn tách biệt, không liên hệ"] },
+  { id: "chapter-5-16", prompt: "Cơ chế vận hành của nền kinh tế thị trường định hướng XHCN là:", answer: "Cơ chế thị trường có sự quản lý của Nhà nước pháp quyền XHCN", choices: ["Cơ chế kế hoạch hóa tập trung, bao cấp", "Cơ chế thị trường có sự quản lý của Nhà nước pháp quyền XHCN", "Cơ chế thị trường tự do tuyệt đối", "Cơ chế tự cấp tự túc"] },
+  { id: "chapter-5-17", prompt: "Phân phối theo phúc lợi trong nền KTTT định hướng XHCN nhằm:", answer: "Thể hiện tính ưu việt, quan tâm tới nhóm yếu thế và bảo đảm công bằng xã hội", choices: ["Xóa bỏ phân phối theo lao động", "Thể hiện tính ưu việt, quan tâm tới nhóm yếu thế và bảo đảm công bằng xã hội", "Chỉ có lợi cho người giàu", "Thay thế hoàn toàn tiền lương"] },
+  { id: "chapter-5-18", prompt: "Nhà nước pháp quyền XHCN quản lý nền kinh tế chủ yếu bằng công cụ:", answer: "Pháp luật, chiến lược, quy hoạch, kế hoạch và các chính sách kinh tế", choices: ["Mệnh lệnh hành chính áp đặt cho từng doanh nghiệp", "Pháp luật, chiến lược, quy hoạch, kế hoạch và các chính sách kinh tế", "Quyết định trực tiếp giá của mọi hàng hóa", "Tịch thu tài sản doanh nghiệp"] },
+  { id: "chapter-5-19", prompt: "Trong tình huống NOXH, việc các “ông lớn” bất động sản không mặn mà xây nhà ở xã hội mà tập trung xây chung cư cao cấp thể hiện quy luật nào của thị trường?", answer: "Quy luật lợi nhuận - tư bản luôn chảy về nơi có tỷ suất lợi nhuận cao hơn", choices: ["Quy luật lưu thông tiền tệ", "Quy luật lợi nhuận - tư bản luôn chảy về nơi có tỷ suất lợi nhuận cao hơn", "Quy luật bảo toàn năng lượng", "Quy luật phân phối theo phúc lợi"] },
+  { id: "chapter-5-20", prompt: "Nhận định “nếu để thị trường tự điều tiết, người nghèo sẽ không bao giờ có nhà” minh họa rõ nhất cho khái niệm:", answer: "Thất bại (khuyết tật) của thị trường", choices: ["Thành công của thị trường", "Thất bại (khuyết tật) của thị trường", "Ưu điểm tuyệt đối của bàn tay vô hình", "Quy luật giá trị thặng dư"] },
+  { id: "chapter-5-21", prompt: "Trong tình huống này, “bàn tay vô hình” của thị trường đã:", answer: "Thất bại trong việc bảo đảm nhà ở cho người thu nhập thấp", choices: ["Tự động phân bổ nhà ở công bằng cho mọi người", "Thất bại trong việc bảo đảm nhà ở cho người thu nhập thấp", "Loại bỏ hoàn toàn nhu cầu về nhà ở", "Khiến giá nhà giảm mạnh cho người nghèo"] },
+  { id: "chapter-5-22", prompt: "Lý do trực tiếp khiến doanh nghiệp bất động sản né tránh dự án NOXH là:", answer: "Giá bán bị khống chế nên biên lợi nhuận thấp, thủ tục kéo dài, thu hồi vốn chậm", choices: ["Giá bán bị khống chế nên biên lợi nhuận thấp, thủ tục kéo dài, thu hồi vốn chậm", "Không có người dân nào cần nhà ở xã hội", "Nhà nước cấm xây nhà ở xã hội", "Chi phí xây NOXH cao hơn chung cư cao cấp"] },
+  { id: "chapter-5-23", prompt: "Để điều hòa lợi ích giữa doanh nghiệp và người dân, Nhà nước nên sử dụng nhóm công cụ kinh tế nào?", answer: "Ưu đãi thuế, hỗ trợ về đất đai, lãi suất ưu đãi và các chính sách khuyến khích đầu tư NOXH", choices: ["Cấm toàn bộ dự án chung cư thương mại", "Ưu đãi thuế, hỗ trợ về đất đai, lãi suất ưu đãi và các chính sách khuyến khích đầu tư NOXH", "Ra lệnh hành chính buộc mọi doanh nghiệp xây NOXH miễn phí", "Không làm gì, để thị trường tự quyết"] },
+  { id: "chapter-5-24", prompt: "Nếu Nhà nước dùng mệnh lệnh hành chính ép doanh nghiệp phải xây NOXH mà không có hỗ trợ, điều này dễ mâu thuẫn với nguyên tắc nào của kinh tế thị trường?", answer: "Nguyên tắc tự do kinh doanh và tự chủ của doanh nghiệp", choices: ["Nguyên tắc tự do kinh doanh và tự chủ của doanh nghiệp", "Nguyên tắc phân phối theo phúc lợi", "Nguyên tắc Nhà nước pháp quyền", "Nguyên tắc công bằng xã hội"] },
+  { id: "chapter-5-25", prompt: "Việc Nhà nước can thiệp vào thị trường nhà ở phản ánh đặc trưng nào của KTTT định hướng XHCN?", answer: "Gắn tăng trưởng kinh tế với tiến bộ và công bằng xã hội, có sự điều tiết của Nhà nước", choices: ["Gắn tăng trưởng kinh tế với tiến bộ và công bằng xã hội, có sự điều tiết của Nhà nước", "Xóa bỏ hoàn toàn thị trường bất động sản", "Chỉ phục vụ lợi ích của doanh nghiệp", "Phân phối bình quân nhà ở cho tất cả mọi người"] },
+  { id: "chapter-5-26", prompt: "So với kinh tế thị trường tư bản chủ nghĩa thuần túy, cách xử lý vấn đề nhà ở cho người nghèo trong KTTT định hướng XHCN khác biệt ở chỗ:", answer: "Nhà nước chủ động điều tiết, đặt mục tiêu công bằng xã hội bên cạnh hiệu quả kinh tế", choices: ["Hoàn toàn để thị trường quyết định, ai có tiền thì mua", "Nhà nước chủ động điều tiết, đặt mục tiêu công bằng xã hội bên cạnh hiệu quả kinh tế", "Cấm mọi giao dịch bất động sản", "Chỉ cho phép doanh nghiệp nhà nước xây nhà"] },
+  { id: "chapter-5-27", prompt: "“Quan hệ lợi ích” cần được hài hòa trong tình huống NOXH là giữa các chủ thể nào?", answer: "Giữa doanh nghiệp (lợi nhuận), người dân (nhu cầu nhà ở) và Nhà nước (mục tiêu xã hội)", choices: ["Chỉ giữa các doanh nghiệp với nhau", "Giữa doanh nghiệp (lợi nhuận), người dân (nhu cầu nhà ở) và Nhà nước (mục tiêu xã hội)", "Chỉ giữa Nhà nước và nước ngoài", "Không có quan hệ lợi ích nào"] },
+  { id: "chapter-5-28", prompt: "Giải pháp phù hợp nhất với tinh thần KTTT định hướng XHCN để giải quyết bài toán nhà ở là:", answer: "Kết hợp cơ chế thị trường với sự điều tiết của Nhà nước bằng chính sách hỗ trợ, ưu đãi để vừa bảo đảm hiệu quả vừa bảo đảm an sinh", choices: ["Bỏ mặc thị trường tự vận hành hoàn toàn", "Kết hợp cơ chế thị trường với sự điều tiết của Nhà nước bằng chính sách hỗ trợ, ưu đãi để vừa bảo đảm hiệu quả vừa bảo đảm an sinh", "Quốc hữu hóa toàn bộ ngành bất động sản", "Để giá nhà tăng tự do không kiểm soát"] },
+  { id: "chapter-5-29", prompt: "Thông điệp cốt lõi mà tình huống NOXH muốn làm rõ về vai trò của Nhà nước là:", answer: "Khi thị trường thất bại trước bài toán xã hội, Nhà nước phải điều tiết để bảo đảm định hướng XHCN và hài hòa lợi ích", choices: ["Nhà nước nên rút lui hoàn toàn khỏi nền kinh tế", "Khi thị trường thất bại trước bài toán xã hội, Nhà nước phải điều tiết để bảo đảm định hướng XHCN và hài hòa lợi ích", "Nhà nước chỉ nên lo cho doanh nghiệp lớn", "Nhà nước cần thay thị trường quyết định mọi giá cả"] },
+  { id: "chapter-5-30", prompt: "Việc kinh tế nhà nước tham gia phát triển quỹ nhà ở xã hội, dẫn dắt thị trường bất động sản thể hiện:", answer: "Vai trò chủ đạo của kinh tế nhà nước trong định hướng, điều tiết và khắc phục khuyết tật thị trường", choices: ["Sự thừa thãi, không cần thiết của kinh tế nhà nước", "Vai trò chủ đạo của kinh tế nhà nước trong định hướng, điều tiết và khắc phục khuyết tật thị trường", "Việc kinh tế nhà nước cạnh tranh không lành mạnh", "Sự xóa bỏ kinh tế tư nhân"] },
+  { id: "chapter-5-31", prompt: "Sinh viên mới ra trường lương 10-15 triệu/tháng nhưng giá chung cư thương mại 3-5 tỷ/căn. Khoảng cách này cho thấy điều gì về cơ chế giá của thị trường?", answer: "Giá thị trường phản ánh cung - cầu và khả năng thanh toán, nên bỏ sót nhu cầu thiết yếu của nhóm thu nhập thấp", choices: ["Thị trường luôn tự động đưa giá về mức mọi người đều mua được", "Giá thị trường phản ánh cung - cầu và khả năng thanh toán, nên bỏ sót nhu cầu thiết yếu của nhóm thu nhập thấp", "Giá nhà cao chứng tỏ thị trường đang hoạt động công bằng", "Nhà nước là bên quyết định toàn bộ giá nhà trên thị trường"] },
+  { id: "chapter-5-32", prompt: "Trong tình huống, việc Nhà nước khống chế giá bán NOXH ở mức thấp nhằm mục đích:", answer: "Bảo đảm người thu nhập thấp có khả năng tiếp cận nhà ở", choices: ["Làm doanh nghiệp phá sản", "Bảo đảm người thu nhập thấp có khả năng tiếp cận nhà ở", "Tăng lợi nhuận cho chủ đầu tư", "Hạn chế nguồn cung nhà ở"] },
+  { id: "chapter-5-33", prompt: "“Bàn tay hữu hình” của Nhà nước trong tình huống NOXH thể hiện qua:", answer: "Các chính sách ưu đãi thuế, đất đai, tín dụng và giám sát để định hướng nguồn lực vào NOXH", choices: ["Việc Nhà nước rút khỏi thị trường", "Các chính sách ưu đãi thuế, đất đai, tín dụng và giám sát để định hướng nguồn lực vào NOXH", "Việc để doanh nghiệp tự quyết định mọi thứ", "Việc cấm xây dựng chung cư"] },
+  { id: "chapter-5-34", prompt: "Chi tiết “thủ tục rắc rối” khiến dự án NOXH khan hiếm cho thấy cần:", answer: "Hoàn thiện thể chế, cải cách thủ tục hành chính để thị trường vận hành đồng bộ, hiệu quả", choices: ["Bỏ hoàn toàn vai trò Nhà nước", "Hoàn thiện thể chế, cải cách thủ tục hành chính để thị trường vận hành đồng bộ, hiệu quả", "Tăng giá bán NOXH", "Ngừng phát triển nhà ở xã hội"] },
+  { id: "chapter-5-35", prompt: "Thông tin “người giàu đi ô tô vẫn mua được NOXH của người nghèo” phản ánh vấn đề gì?", answer: "Bất cập trong quản lý, thực thi và giám sát chính sách, đòi hỏi Nhà nước tăng cường kiểm tra, minh bạch", choices: ["Chính sách đã hoàn hảo", "Bất cập trong quản lý, thực thi và giám sát chính sách, đòi hỏi Nhà nước tăng cường kiểm tra, minh bạch", "Thị trường đã tự điều tiết tốt", "Không cần Nhà nước can thiệp"] },
+  { id: "chapter-5-36", prompt: "Sản phẩm “Đề xuất chính sách gửi Bộ Xây dựng” để giải quyết bài toán NOXH thuộc nhóm giải pháp:", answer: "Hoàn thiện thể chế và sử dụng công cụ điều tiết của Nhà nước", choices: ["Xóa bỏ kinh tế thị trường", "Hoàn thiện thể chế và sử dụng công cụ điều tiết của Nhà nước", "Để mặc thị trường tự vận hành", "Quốc hữu hóa toàn bộ bất động sản"] },
+  { id: "chapter-5-37", prompt: "Lợi ích kinh tế được hiểu là:", answer: "Lợi ích vật chất mà chủ thể thu được khi thực hiện các hoạt động kinh tế", choices: ["Chỉ là lợi ích tinh thần", "Lợi ích vật chất mà chủ thể thu được khi thực hiện các hoạt động kinh tế", "Khoản tiền phạt vi phạm", "Chi phí bỏ ra để sản xuất"] },
+  { id: "chapter-5-38", prompt: "Trong tình huống NOXH, ba nhóm chủ thể có quan hệ lợi ích cần được hài hòa là:", answer: "Doanh nghiệp, người dân và Nhà nước", choices: ["Doanh nghiệp, người dân và Nhà nước", "Chỉ doanh nghiệp và ngân hàng", "Chỉ Nhà nước và nước ngoài", "Chỉ người dân với nhau"] },
+  { id: "chapter-5-39", prompt: "Vai trò của Nhà nước trong bảo đảm hài hòa các quan hệ lợi ích kinh tế là:", answer: "Điều hòa lợi ích thông qua chính sách phân phối, an sinh và điều tiết, tránh để mâu thuẫn lợi ích gây bất ổn", choices: ["Chỉ bảo vệ lợi ích doanh nghiệp lớn", "Điều hòa lợi ích thông qua chính sách phân phối, an sinh và điều tiết, tránh để mâu thuẫn lợi ích gây bất ổn", "Xóa bỏ mọi lợi ích cá nhân", "Đứng ngoài, không can thiệp"] },
+  { id: "chapter-5-40", prompt: "Quan điểm phù hợp nhất với KTTT định hướng XHCN khi giải quyết mâu thuẫn lợi ích trong bài toán nhà ở là:", answer: "Kết hợp cơ chế thị trường với điều tiết của Nhà nước để vừa bảo đảm lợi nhuận hợp lý cho doanh nghiệp, vừa lo nhà ở cho dân", choices: ["Để thị trường tự lo hết, ai có tiền thì mua", "Nhà nước bao cấp toàn bộ nhà ở cho mọi người", "Kết hợp cơ chế thị trường với điều tiết của Nhà nước để vừa bảo đảm lợi nhuận hợp lý cho doanh nghiệp, vừa lo nhà ở cho dân", "Cấm doanh nghiệp tham gia thị trường nhà ở"] },
 ];
 
-const STARTER_TEXT = [
-  "Trong nền kinh tế thị trường, doanh nghiệp thường ưu tiên mục tiêu nào? | Tối đa hóa lợi nhuận",
-  "Khi thị trường không tự giải quyết được nhà ở cho người thu nhập thấp, Nhà nước cần làm gì? | Điều tiết bằng chính sách",
-  "NOXH là viết tắt của khái niệm nào? | Nhà ở xã hội",
-  "Công cụ nào giúp kiểm soát NOXH đến đúng đối tượng? | Thể chế minh bạch và số hóa",
-].join("\n");
+const STARTER_TEXT = SAMPLE_QUESTIONS
+  .map(question => `${question.prompt} | ${question.answer}`)
+  .join("\n");
 
 const QUESTION_TIME_LIMIT_MS = 30_000;
 
@@ -182,6 +225,7 @@ function getUsableQuestions(questions: QuizQuestion[]) {
       ...question,
       prompt: question.prompt.trim(),
       answer: question.answer.trim(),
+      choices: question.choices?.map(choice => choice.trim()).filter(Boolean),
     }))
     .filter(question => question.prompt && question.answer);
 }
@@ -245,8 +289,78 @@ function trimAnswer(value: string, limit = 90) {
   return clean.length > limit ? `${clean.slice(0, limit - 1)}…` : clean;
 }
 
+function cleanQuizText(value: string) {
+  return value
+    .replace(/\u0000/g, "")
+    .replace(/\r/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/^Trang\s+\d+.*$/gim, "")
+    .trim();
+}
+
+function looksLikeBinaryText(value: string) {
+  if (!value.trim()) return true;
+  const sample = value.slice(0, 4000);
+  const replacementCount = (sample.match(/\uFFFD/g) ?? []).length;
+  const controlCount = (sample.match(/[\x00-\x08\x0E-\x1F]/g) ?? []).length;
+  return replacementCount > 8 || controlCount > 8 || /%PDF-|PK\x03\x04/.test(sample);
+}
+
+function parseAnswerKey(raw: string) {
+  const answers = new Map<number, string>();
+  const keyArea = raw.split(/ĐÁP ÁN|DAP AN|Bảng đáp án nhanh|Bang dap an nhanh/i).slice(1).join("\n") || raw;
+  for (const match of keyArea.matchAll(/(?:^|\s)(\d{1,2})\s*[.)]\s*([ABCD])\b/gi)) {
+    answers.set(Number(match[1]), match[2].toUpperCase());
+  }
+  return answers;
+}
+
+function parseMultipleChoiceQuestions(raw: string): QuizQuestion[] {
+  const clean = cleanQuizText(raw);
+  const questionArea = clean.split(/ĐÁP ÁN|DAP AN|Bảng đáp án nhanh|Bang dap an nhanh/i)[0];
+  const answerKey = parseAnswerKey(clean);
+  const questions: QuizQuestion[] = [];
+  const questionMatches = Array.from(questionArea.matchAll(/Câu\s+(\d{1,2})\s*[.:]\s*([\s\S]*?)(?=\n?\s*Câu\s+\d{1,2}\s*[.:]|\n?\s*PHẦN\s+[A-Z]|\n?\s*PHAN\s+[A-Z]|$)/gi));
+
+  for (const match of questionMatches) {
+    const number = Number(match[1]);
+    const body = match[2].trim();
+    const optionMatches = Array.from(body.matchAll(/(?:^|\n)\s*([ABCD])\s*[.)]\s*([\s\S]*?)(?=\n\s*[ABCD]\s*[.)]|\n\s*$)/gi));
+    if (optionMatches.length < 2) continue;
+
+    const prompt = body.slice(0, optionMatches[0].index).replace(/\s+/g, " ").trim();
+    const choicesByLetter = new Map<string, string>();
+    optionMatches.forEach(option => {
+      choicesByLetter.set(option[1].toUpperCase(), option[2].replace(/\s+/g, " ").trim());
+    });
+
+    const choices = ["A", "B", "C", "D"]
+      .map(letter => choicesByLetter.get(letter))
+      .filter((choice): choice is string => Boolean(choice));
+    const answerLetter = answerKey.get(number);
+    const answer = answerLetter ? choicesByLetter.get(answerLetter) : "";
+
+    if (!prompt || !answer) continue;
+    questions.push({
+      id: `mcq-${number}`,
+      prompt: trimAnswer(prompt, 500),
+      answer: trimAnswer(answer, 500),
+      choices: choices.map(choice => trimAnswer(choice, 500)),
+    });
+  }
+
+  return questions;
+}
+
 function parseQuestions(raw: string): QuizQuestion[] {
-  const lines = raw
+  const clean = cleanQuizText(raw);
+  if (looksLikeBinaryText(clean)) return [];
+
+  const multipleChoiceQuestions = parseMultipleChoiceQuestions(clean);
+  if (multipleChoiceQuestions.length > 0) return multipleChoiceQuestions.slice(0, 60);
+
+  const lines = clean
     .split(/\r?\n/)
     .map(line => line.trim())
     .filter(Boolean);
@@ -262,14 +376,14 @@ function parseQuestions(raw: string): QuizQuestion[] {
     if (!prompt || !answer) return [];
     return [{
       id: `q-${index}-${prompt.length}`,
-      prompt: trimAnswer(prompt, 140),
-      answer: trimAnswer(answer),
+      prompt: trimAnswer(prompt, 500),
+      answer: trimAnswer(answer, 500),
     }];
   });
 
-  if (explicitQuestions.length > 0) return explicitQuestions.slice(0, 20);
+  if (explicitQuestions.length > 0) return explicitQuestions.slice(0, 60);
 
-  const sentences = raw
+  const sentences = clean
     .replace(/\s+/g, " ")
     .split(/(?<=[.!?])\s+/)
     .map(sentence => sentence.trim())
@@ -287,6 +401,12 @@ function seededValue(value: string) {
 }
 
 function getAnswerChoices(question: QuizQuestion, questions: QuizQuestion[]) {
+  if (question.choices && question.choices.length >= 2) {
+    return Array.from(new Set([question.answer, ...question.choices]))
+      .filter(Boolean)
+      .sort((a, b) => seededValue(`${question.id}-${a}`) - seededValue(`${question.id}-${b}`));
+  }
+
   const choices = Array.from(new Set([
     question.answer,
     ...questions
@@ -1853,11 +1973,21 @@ function Section9StudyRoom({
   const handleFile = useCallback(async (file: File | undefined) => {
     if (!file) return;
     const text = await file.text();
-    const nextRawInput = `${rawInput.trim()}\n${text.trim()}`.trim();
-    setRawInput(nextRawInput);
+    if (looksLikeBinaryText(text)) {
+      setFileNote(`File ${file.name} đang là PDF/Word nhị phân nên trình duyệt không đọc sạch được. Hãy copy nội dung đề rồi dán vào ô text, hoặc export file sang .txt trước khi upload.`);
+      setMessage("Không import file này để tránh sinh ký tự rác trong bộ câu hỏi.");
+      return;
+    }
+
+    const nextRawInput = `${rawInput.trim()}\n${cleanQuizText(text)}`.trim();
     const parsed = parseQuestions(nextRawInput);
-    if (parsed.length > 0) setDraftQuestions(parsed);
-    setFileNote(`Đã nạp ${file.name}. Với PDF/Word scan, hãy dán thêm nội dung nếu file không có text đọc được.`);
+    setRawInput(nextRawInput);
+    if (parsed.length > 0) {
+      setDraftQuestions(parsed);
+      setFileNote(`Đã nạp ${file.name} và đọc được ${parsed.length} câu hỏi.`);
+    } else {
+      setFileNote(`Đã nạp ${file.name}, nhưng chưa thấy format câu hỏi rõ. Dùng dạng "Câu hỏi | Đáp án" hoặc "Câu 1... A/B/C/D..." kèm bảng đáp án.`);
+    }
   }, [rawInput]);
 
   const chooseAnswer = useCallback(async (value: string, options?: { timedOut?: boolean }) => {
@@ -2288,17 +2418,19 @@ function Section9StudyRoom({
             </div>
             <div className="space-y-3">
               {draftQuestions.map((question, index) => (
-	                <div key={question.id} className="grid lg:grid-cols-[32px_1fr_1fr_auto] gap-3 items-start border-2 border-white/12 bg-[#0d102f] p-3">
-	                  <span className="text-[#ffbe0b] font-black pt-3">{index + 1}</span>
-                  <input
+	                <div key={question.id} className="grid lg:grid-cols-[40px_minmax(0,1.35fr)_minmax(0,1fr)_auto] gap-3 items-start border-2 border-white/12 bg-[#0d102f] p-3">
+	                  <span className="text-[#ffbe0b] font-black pt-3 tabular-nums">{index + 1}</span>
+                  <textarea
                     value={question.prompt}
                     onChange={event => updateDraftQuestion(question.id, "prompt", event.target.value)}
-	                    className="bg-[#070724] border-2 border-white/15 px-3 py-2 text-sm text-white outline-none focus:border-[#ffbe0b]"
+                    rows={2}
+	                    className="min-w-0 w-full resize-y bg-[#070724] border-2 border-white/15 px-3 py-2 text-sm leading-relaxed text-white outline-none focus:border-[#ffbe0b]"
                   />
-                  <input
+                  <textarea
                     value={question.answer}
                     onChange={event => updateDraftQuestion(question.id, "answer", event.target.value)}
-	                    className="bg-[#070724] border-2 border-white/15 px-3 py-2 text-sm text-white outline-none focus:border-[#ffbe0b]"
+                    rows={2}
+	                    className="min-w-0 w-full resize-y bg-[#070724] border-2 border-white/15 px-3 py-2 text-sm leading-relaxed text-white outline-none focus:border-[#ffbe0b]"
                   />
                   <button onClick={() => removeDraftQuestion(question.id)} className="border-2 border-primary/60 text-primary px-3 py-2 text-xs font-black uppercase">Remove</button>
                 </div>

@@ -422,6 +422,18 @@ function getAnswerChoices(question: QuizQuestion, questions: QuizQuestion[]) {
     .sort((a, b) => seededValue(`${question.id}-${a}`) - seededValue(`${question.id}-${b}`));
 }
 
+function getGameLabel(mode: GameMode | null) {
+  if (mode === "football") return "Football";
+  if (mode === "fishing") return "Fishing";
+  return "Chưa chọn game";
+}
+
+function getPlayerStatusLabel(player: RoomPlayer) {
+  if (player.status === "done") return "Hoàn thành";
+  if (player.status === "playing") return "Đang chơi";
+  return "Trong lobby";
+}
+
 function getPixelButtonClass(active = false) {
   return `border-2 border-[#fff3b0] px-4 py-3 font-mono text-xs font-black uppercase tracking-wider transition-transform shadow-[4px_4px_0_#0b0824] ${
     active
@@ -2388,17 +2400,13 @@ function Section9StudyRoom({
                   </p>
                 </div>
 
-                <div className="space-y-2 mb-4">
-                  {(room?.players ?? []).length === 0 ? (
-	                    <p className="text-sm text-white/80">Lobby trống. Mở tab khác, nhập mã phòng để join.</p>
-                  ) : (
-                    room?.players.map(player => (
-	                      <div key={player.id} className="flex items-center justify-between border-2 border-[#fff3b0]/50 bg-[#17103f] px-3 py-2">
-	                        <span className="text-sm text-white">{player.name}</span>
-	                        <span className="text-xs text-[#ffbe0b]">{player.mode ?? "no game"}</span>
-                      </div>
-                    ))
-                  )}
+                <div className="mb-4">
+                  <PlayerRoster
+                    players={room?.players ?? []}
+                    currentPlayerId={playerIdRef.current}
+                    questionCount={room?.questions.length ?? draftQuestions.length}
+                    emptyText="Lobby trống. Mở tab khác, nhập mã phòng để join."
+                  />
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-3">
@@ -2411,7 +2419,11 @@ function Section9StudyRoom({
                 </div>
               </div>
 
-              <Leaderboard players={rankedPlayers} currentPlayerId={playerIdRef.current} />
+              <Leaderboard
+                players={rankedPlayers}
+                currentPlayerId={playerIdRef.current}
+                questionCount={room?.questions.length ?? draftQuestions.length}
+              />
             </div>
           </div>
 
@@ -2533,13 +2545,21 @@ function Section9StudyRoom({
             ))}
               </div>
             </div>
-            <Leaderboard players={rankedPlayers} currentPlayerId={playerIdRef.current} />
+            <div className="space-y-4">
+              <PlayerRoster
+                players={room.players}
+                currentPlayerId={playerIdRef.current}
+                questionCount={room.questions.length}
+                emptyText="Chưa có người chơi nào trong phòng."
+              />
+              <Leaderboard players={rankedPlayers} currentPlayerId={playerIdRef.current} questionCount={room.questions.length} />
+            </div>
           </div>
         )}
 
         {role === "player" && currentPlayer?.mode && room?.phase === "playing" && activeQuestion && !finished && (
           <div className="bg-[#11133f]/95 border-2 border-[#7dd3fc]/80 overflow-hidden shadow-[8px_8px_0_#000]">
-            <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="grid xl:grid-cols-[0.78fr_1fr_0.62fr] lg:grid-cols-[0.9fr_1.1fr]">
               <div className="border-b-2 lg:border-b-0 lg:border-r-2 border-[#7dd3fc]/30 p-5">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
@@ -2646,6 +2666,24 @@ function Section9StudyRoom({
                       </button>
                     </div>
               </div>
+
+              <div className="border-t-2 xl:border-t-0 xl:border-l-2 lg:col-span-2 xl:col-span-1 border-[#7dd3fc]/30 p-5 bg-[#07111f]/55">
+                <div className="space-y-4">
+                  <Leaderboard
+                    players={rankedPlayers}
+                    currentPlayerId={playerIdRef.current}
+                    questionCount={questions.length}
+                    compact
+                  />
+                  <PlayerRoster
+                    players={room.players}
+                    currentPlayerId={playerIdRef.current}
+                    questionCount={questions.length}
+                    emptyText="Chưa có người chơi nào trong phòng."
+                    compact
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -2676,7 +2714,7 @@ function Section9StudyRoom({
               </div>
             </div>
             <div className="space-y-6">
-              <Leaderboard players={rankedPlayers} currentPlayerId={playerIdRef.current} />
+              <Leaderboard players={rankedPlayers} currentPlayerId={playerIdRef.current} questionCount={questions.length} />
               <div className="bg-[#11133f]/95 border-2 border-[#7dd3fc]/80 p-5 shadow-[8px_8px_0_#000]">
                 <p className="font-black text-white mb-3">Answer Review</p>
                 <div className="space-y-2">
@@ -2958,34 +2996,138 @@ function PixelGameScene({
   );
 }
 
-function Leaderboard({ players, currentPlayerId }: { players: RoomPlayer[]; currentPlayerId: string }) {
+function PlayerRoster({
+  players,
+  currentPlayerId,
+  questionCount,
+  emptyText,
+  compact = false,
+}: {
+  players: RoomPlayer[];
+  currentPlayerId: string;
+  questionCount: number;
+  emptyText: string;
+  compact?: boolean;
+}) {
   return (
-    <div className="bg-[#11133f]/95 border-2 border-[#ef476f]/80 p-5 shadow-[6px_6px_0_#000]">
-      <div className="flex items-center gap-2 mb-4">
-        <Trophy className="w-5 h-5 text-[#ffbe0b]" />
-        <p className="font-black text-white">Multiplayer Leaderboard</p>
+    <div className={`bg-[#0b2438]/95 border-2 border-[#06d6a0]/80 ${compact ? "p-4" : "p-5"} shadow-[5px_5px_0_#000]`}>
+      <div className="flex items-center justify-between gap-3 mb-4">
+        <div className="flex items-center gap-2">
+          <Users className="w-5 h-5 text-[#06d6a0]" />
+          <p className="font-black text-white">Players In Room</p>
+        </div>
+        <span className="border-2 border-[#06d6a0]/70 bg-[#061b24] px-2 py-1 text-[10px] font-black text-[#8fffe1]">
+          {players.length}
+        </span>
+      </div>
+
+      <div className="space-y-2">
+        {players.length === 0 ? (
+          <p className="text-sm text-white/75">{emptyText}</p>
+        ) : (
+          players.map(player => {
+            const progress = questionCount > 0 ? Math.min(100, (player.answered / questionCount) * 100) : 0;
+            const isCurrent = player.id === currentPlayerId;
+            return (
+              <div
+                key={player.id}
+                className={`border-2 px-3 py-3 ${
+                  isCurrent
+                    ? "border-[#ffbe0b] bg-[#ffbe0b]/15"
+                    : "border-white/10 bg-[#07111f]"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-white">
+                      {player.name}{isCurrent ? " · Bạn" : ""}
+                    </p>
+                    <p className="mt-1 text-[10px] uppercase tracking-wider text-white/55">
+                      {getGameLabel(player.mode)} · {getPlayerStatusLabel(player)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-black tabular-nums text-[#ffbe0b]">{player.score}</p>
+                    <p className="text-[10px] uppercase tracking-wider text-white/55">điểm</p>
+                  </div>
+                </div>
+
+                <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                  <div className="border border-[#06d6a0]/40 bg-[#061b24] px-2 py-1">
+                    <p className="text-[10px] text-[#06d6a0]">Đúng</p>
+                    <p className="font-black text-white">{player.correct}</p>
+                  </div>
+                  <div className="border border-[#ef476f]/40 bg-[#261028] px-2 py-1">
+                    <p className="text-[10px] text-[#ff9db3]">Sai</p>
+                    <p className="font-black text-white">{player.incorrect}</p>
+                  </div>
+                  <div className="border border-[#7dd3fc]/40 bg-[#07111f] px-2 py-1">
+                    <p className="text-[10px] text-[#7dd3fc]">Câu</p>
+                    <p className="font-black text-white">{player.answered}/{questionCount}</p>
+                  </div>
+                </div>
+
+                <div className="mt-3 h-3 border-2 border-[#7dd3fc]/30 bg-[#070724] p-0.5" aria-label={`Tiến độ ${player.name}`}>
+                  <div className="h-full bg-[#06d6a0]" style={{ width: `${progress}%` }} />
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Leaderboard({
+  players,
+  currentPlayerId,
+  questionCount = 0,
+  compact = false,
+}: {
+  players: RoomPlayer[];
+  currentPlayerId: string;
+  questionCount?: number;
+  compact?: boolean;
+}) {
+  return (
+    <div className={`bg-[#11133f]/95 border-2 border-[#ef476f]/80 ${compact ? "p-4" : "p-5"} shadow-[6px_6px_0_#000]`}>
+      <div className="flex items-center justify-between gap-3 mb-4">
+        <div className="flex items-center gap-2">
+          <Trophy className="w-5 h-5 text-[#ffbe0b]" />
+          <p className="font-black text-white">Live Leaderboard</p>
+        </div>
+        {players[0] && (
+          <span className="border-2 border-[#ffbe0b]/70 bg-[#2b1a04] px-2 py-1 text-[10px] font-black text-[#ffbe0b]">
+            Top: {players[0].name}
+          </span>
+        )}
       </div>
       <div className="space-y-2">
         {players.length === 0 ? (
-          <p className="text-sm text-white/75">No players yet.</p>
+          <p className="text-sm text-white/75">Chưa có người chơi.</p>
         ) : (
           players.map((player, index) => (
             <div
               key={player.id}
-              className={`grid grid-cols-[38px_1fr_auto] gap-3 items-center border-2 px-3 py-2 ${
+              className={`grid grid-cols-[42px_1fr_auto] gap-3 items-center border-2 px-3 py-3 ${
                 player.id === currentPlayerId
                   ? "border-[#ffbe0b] bg-[#ffbe0b]/20 text-white"
                   : "border-white/10 bg-[#070724] text-white"
               }`}
             >
-              <span className="font-black">#{index + 1}</span>
+              <span className={`font-black tabular-nums ${index === 0 ? "text-[#ffbe0b]" : "text-white/80"}`}>#{index + 1}</span>
               <div className="min-w-0">
-                <p className="text-sm truncate">{player.name}</p>
+                <p className="text-sm font-black truncate">{player.name}{player.id === currentPlayerId ? " · Bạn" : ""}</p>
                 <p className="text-[10px] uppercase tracking-wider opacity-70">
-                  {player.mode ?? "no game"} · {player.status}
+                  {getGameLabel(player.mode)} · {player.correct} đúng · {player.incorrect} sai
+                  {questionCount > 0 ? ` · ${player.answered}/${questionCount} câu` : ""}
                 </p>
               </div>
-              <span className="text-lg font-black tabular-nums">{player.score}</span>
+              <div className="text-right">
+                <span className="block text-lg font-black tabular-nums text-[#ffbe0b]">{player.score}</span>
+                <span className="text-[10px] uppercase tracking-wider text-white/50">điểm</span>
+              </div>
             </div>
           ))
         )}

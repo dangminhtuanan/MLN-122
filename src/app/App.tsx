@@ -1864,7 +1864,9 @@ function Section9StudyRoom({
     const storedRoom = code ? await readRealtimeRoom(code) : null;
 
     if (!storedRoom) {
-      setMessage("Không tìm thấy phòng. Hãy kiểm tra mã 4 ký tự từ host.");
+      setMessage(isSupabaseConfigured
+        ? "Không tìm thấy phòng. Hãy kiểm tra mã 4 ký tự từ host."
+        : "Không tìm thấy phòng vì Supabase realtime đang OFF. Local fallback chỉ join được trong cùng browser, không qua incognito hoặc máy khác.");
       return;
     }
 
@@ -2243,8 +2245,13 @@ function Section9StudyRoom({
             Host tạo phòng, player nhập mã, chờ lobby rồi chọn Football hoặc Fishing để trả lời câu hỏi kiểu Kahoot. Mỗi câu có 30 giây.
           </p>
           <div className="mt-4 inline-flex border-2 border-[#06d6a0]/70 bg-[#061b24] px-3 py-2 text-[11px] font-black uppercase tracking-wider text-[#8fffe1]">
-            {isSupabaseConfigured ? "Supabase realtime: ON" : "Supabase realtime: OFF · local fallback"}
+            {isSupabaseConfigured ? "Supabase realtime: ON" : "Supabase realtime: OFF · same browser only"}
           </div>
+          {!isSupabaseConfigured && (
+            <p className="mt-3 max-w-3xl border-2 border-[#ef476f]/80 bg-[#2a0f2f] px-4 py-3 text-xs leading-relaxed text-white/85">
+              Muốn host và player vào được từ tab ẩn danh, máy khác hoặc điện thoại, hãy thêm `VITE_SUPABASE_URL` và `VITE_SUPABASE_ANON_KEY` trên Vercel rồi redeploy.
+            </p>
+          )}
         </div>
 
         {!role && (
